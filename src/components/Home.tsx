@@ -1,4 +1,4 @@
-"use client"; // Add this at the top for client-side rendering
+"use client"; 
 import pdfURL from "/resume.pdf?url";
 import { ModeToggle } from "./mode-toggle";
 import { EducationTimeline } from "./timeliness/education.timeliness";
@@ -6,6 +6,11 @@ import { Data } from "../data";
 import { ProjectDetails } from "./projectDetails";
 import { useState } from "react";
 const { education } = Data.about;
+
+import { FaPhoneAlt, FaGithub } from "react-icons/fa";
+import { MdOutlineMail } from "react-icons/md";
+import { BsLinkedin } from "react-icons/bs";
+import { RiContactsBook2Fill } from "react-icons/ri";
 import { FaCaretLeft, FaCaretRight } from "react-icons/fa";
 import ContactForm from "./contact/contact";
 const Home = () => {
@@ -238,8 +243,45 @@ const Home = () => {
           </div>
         </div>
       </section>
-
-      <ContactForm/>
+      <ContactForm />
+      <div className="flex flex-col w-screen h-auto text-justify text-xl font-light gap-5 px-10">
+        <div
+          className="flex flex-col text-lg font-semibold justify-center gap-[1vw]"
+          id="contact"
+        >
+          <div className="flex items-center gap-[0.5vw]">
+            <RiContactsBook2Fill size={21} />
+            Contact
+          </div>
+          <div className="flex text-md font-light">
+            Let’s get in touch! Whether you have a question or just want to say
+            hi, I’ll try my best to respond.
+          </div>
+        </div>
+        <div className="flex flex-col text-md gap-[1vw] justify-center">
+          <div>Manish Karki</div>
+          <div className="flex items-center gap-[1vw]">
+            <MdOutlineMail size={21} />
+            <div className="hover:underline hover:text-blue-500">
+              karkimanish188@gmail.com
+            </div>
+          </div>
+          <div className="flex items-center gap-[1vw]">
+            <FaPhoneAlt size={21} />
+            <div className="hover:underline hover:text-blue-500">
+              +9779840037444
+            </div>
+          </div>
+          <div className="flex items-center gap-[1vw]">
+            <BsLinkedin size={21} href="https://www.linkedin.com/in/manish-karki-aaa8501b4/"/>
+            <div className="hover:underline hover:text-blue-500">Details</div>
+          </div>
+          <div className="flex items-center gap-[1vw]">
+            <FaGithub size={21} />
+            <div className="hover:underline hover:text-blue-500">Details</div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

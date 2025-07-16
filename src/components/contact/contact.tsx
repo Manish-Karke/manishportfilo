@@ -13,51 +13,44 @@ import {
   serverTimestamp,
 } from "firebase/firestore";
 
-// Global variables provided by the Canvas environment
-// We'll add a more robust fallback for firebaseConfig here
 const firebaseConfig =
   typeof __firebase_config !== "undefined" && __firebase_config
     ? JSON.parse(__firebase_config)
     : {
-        
-        apiKey: "AIzaSyCuTwdi9TM8GtMjAif2S1MD0rqZ9Kfj2YU",
+        apiKey: import.meta.env.VITE_API_KEY,
         authDomain: "nsih-79712.firebaseapp.com",
         projectId: "nsih-79712",
         storageBucket: "nsih-79712.firebasestorage.app",
         messagingSenderId: "231389351424",
         appId: "1:231389351424:web:1bd210267e3c8587c892e5",
         measurementId: "G-C6HTYFJ8F5",
-       
       };
 
 const appId = typeof __app_id !== "undefined" ? __app_id : "default-app-id";
 const initialAuthToken =
   typeof __initial_auth_token !== "undefined" ? __initial_auth_token : null;
 
-// ContactForm component for handling user inquiries
 const ContactForm = () => {
-  // State variables for form inputs
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
-  // State for UI feedback
+
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  // State for Firebase instances and user ID
+
   const [db, setDb] = useState(null);
   const [auth, setAuth] = useState(null);
   const [userId, setUserId] = useState(null);
-  const [isAuthReady, setIsAuthReady] = useState(false); // To track auth initialization
+  const [isAuthReady, setIsAuthReady] = useState(false);
 
-  // Initialize Firebase and set up authentication listener
   useEffect(() => {
     let app;
-    // Check if a Firebase app already exists to prevent duplicate initialization
+
     if (!getApps().length) {
       app = initializeApp(firebaseConfig);
     } else {
-      app = getApp(); // Get the existing app
+      app = getApp();
     }
 
     try {
@@ -67,19 +60,17 @@ const ContactForm = () => {
       setDb(firestore);
       setAuth(firebaseAuth);
 
-      // Listen for authentication state changes
       const unsubscribe = onAuthStateChanged(firebaseAuth, async (user) => {
         if (user) {
           setUserId(user.uid);
         } else {
-          // If no user, sign in anonymously or with custom token
           try {
             if (initialAuthToken) {
               await signInWithCustomToken(firebaseAuth, initialAuthToken);
             } else {
               await signInAnonymously(firebaseAuth);
             }
-            setUserId(firebaseAuth.currentUser?.uid || crypto.randomUUID()); // Ensure userId is set
+            setUserId(firebaseAuth.currentUser?.uid || crypto.randomUUID());
           } catch (error) {
             console.error("Firebase authentication error:", error);
             setSubmitError("Failed to authenticate. Please try again.");
@@ -88,7 +79,6 @@ const ContactForm = () => {
         setIsAuthReady(true);
       });
 
-   
       return () => unsubscribe();
     } catch (error) {
       console.error("Firebase initialization failed:", error);
@@ -96,14 +86,13 @@ const ContactForm = () => {
         "Failed to initialize the application. Please try again later."
       );
     }
-  }, []); 
+  }, []);
   const handleNameChange = (e) => setName(e.target.value);
   const handleEmailChange = (e) => setEmail(e.target.value);
   const handleMessageChange = (e) => setMessage(e.target.value);
 
-
   const handleSubmit = async (e) => {
-    e.preventDefault(); 
+    e.preventDefault();
 
     if (!db || !userId) {
       setSubmitError(
@@ -117,13 +106,11 @@ const ContactForm = () => {
     setIsSubmitted(false);
 
     try {
-    
       const messagesCollectionRef = collection(
         db,
         `artifacts/${appId}/public/data/contactMessages`
       );
 
-     
       await addDoc(messagesCollectionRef, {
         name: name,
         email: email,
@@ -153,7 +140,7 @@ const ContactForm = () => {
   if (!isAuthReady) {
     return (
       <section
-       id="Getconnected"
+        id="Getconnected"
         className="py-20 px-4 bg-gray-100 dark:bg-gray-900 flex justify-center items-center"
       >
         <p className="text-gray-700 dark:text-gray-300">
@@ -169,8 +156,6 @@ const ContactForm = () => {
         <h2 className="text-4xl sm:text-5xl font-bold text-center text-blue-600 dark:text-blue-400 mb-12">
           Get in Touch
         </h2>
-
-    
 
         {isSubmitted && (
           <div
@@ -215,7 +200,7 @@ const ContactForm = () => {
               className="shadow appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 dark:text-gray-200 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600"
               placeholder="Your Name"
               required
-              disabled={isLoading} // Disable while submitting
+              disabled={isLoading}
             />
           </div>
 
@@ -236,7 +221,7 @@ const ContactForm = () => {
               className="shadow appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 dark:text-gray-200 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600"
               placeholder="your.email@example.com"
               required
-              disabled={isLoading} // Disable while submitting
+              disabled={isLoading}
             />
           </div>
 
@@ -257,7 +242,7 @@ const ContactForm = () => {
               className="shadow appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 dark:text-gray-200 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 resize-y"
               placeholder="Your message..."
               required
-              disabled={isLoading} // Disable while submitting
+              disabled={isLoading}
             ></textarea>
           </div>
 
@@ -266,7 +251,7 @@ const ContactForm = () => {
             <button
               type="submit"
               className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg focus:outline-none focus:shadow-outline transition-colors duration-200 disabled:opacity-50"
-              disabled={isLoading} // Disable button while loading
+              disabled={isLoading}
             >
               {isLoading ? "Sending..." : "Send Message"}
             </button>
